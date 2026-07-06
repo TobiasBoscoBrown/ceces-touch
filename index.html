@@ -312,13 +312,16 @@
           </div>
           <div class="field">
             <label for="date">Preferred date</label>
-            <input id="date" name="Preferred Date" type="date" />
+            <input id="date" name="Preferred Date" type="date" required />
           </div>
           <div class="field">
             <label for="time">Preferred time</label>
-            <input id="time" name="Preferred Time" type="time" step="3600" />
+            <select id="time" name="Preferred Time" required>
+              <option value="" disabled selected>Pick a date first</option>
+            </select>
           </div>
         </div>
+        <p class="form-note" id="hoursNote" style="margin:-.4rem 0 .7rem;text-align:left;color:var(--rose)"></p>
         <div class="field">
           <label for="notes">Notes</label>
           <textarea id="notes" name="Notes" placeholder="Hair length, color, any inspo, best time of day..."></textarea>
@@ -387,125 +390,63 @@
 <div class="lb" id="lb"><img src="" alt="" /></div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-  // Holiday dates (YYYY-MM-DD format)
-  const holidays = [
-    '2026-01-01', // New Year's Day
-    '2026-01-19', // MLK Day
-    '2026-02-16', // Presidents Day
-    '2026-05-25', // Memorial Day
-    '2026-07-04', // Independence Day
-    '2026-09-07', // Labor Day
-    '2026-11-26', // Thanksgiving
-    '2026-11-27', // Day after Thanksgiving
-    '2026-12-25', // Christmas Day
-  ];
+(function(){
+  var yr=document.getElementById('yr'); if(yr) yr.textContent=new Date().getFullYear();
 
-  // Check if date is a holiday
-  function isHoliday(dateStr) {
-    return holidays.includes(dateStr);
-  }
+  var nav=document.getElementById('nav');
+  if(nav) window.addEventListener('scroll',function(){ nav.classList.toggle('scrolled', window.scrollY>50); });
 
-  // Set time input constraints based on selected date
-  const dateInput = document.getElementById('date');
-  const timeInput = document.getElementById('time');
-
-  if (dateInput && timeInput) {
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.min = today;
-
-    // Disable time input until date is selected
-    timeInput.disabled = true;
-
-    dateInput.addEventListener('change', function() {
-      const selectedDate = this.value;
-      
-      if (!selectedDate) {
-        timeInput.disabled = true;
-        timeInput.value = '';
-        return;
-      }
-      
-      // Check if holiday
-      if (isHoliday(selectedDate)) {
-        alert('This date is a holiday. Please select another date.');
-        this.value = '';
-        timeInput.disabled = true;
-        timeInput.value = '';
-        return;
-      }
-
-      // Set time constraints based on day of week
-      const date = new Date(selectedDate);
-      const day = date.getDay();
-      
-      if (day === 0 || day === 6) {
-        // Weekend: 8 AM - 10 PM
-        timeInput.min = '08:00';
-        timeInput.max = '22:00';
-      } else {
-        // Weekday: 4 PM - 10 PM
-        timeInput.min = '16:00';
-        timeInput.max = '22:00';
-      }
-      
-      timeInput.disabled = false;
-      timeInput.value = '';
-    });
-
-    // Form submission validation
-    const form = document.getElementById('bookform');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        const selectedDate = dateInput.value;
-        const selectedTime = timeInput.value;
-
-        if (!selectedDate) {
-          e.preventDefault();
-          alert('Please select a date.');
-          return;
-        }
-
-        if (isHoliday(selectedDate)) {
-          e.preventDefault();
-          alert('This date is a holiday. Please select another date.');
-          dateInput.value = '';
-          timeInput.innerHTML = '<option value="">Select date first</option>';
-          timeInput.disabled = true;
-          return;
-        }
-
-        if (!selectedTime) {
-          e.preventDefault();
-          alert('Please select a time.');
-          return;
-        }
-      });
-    }
-  }
-
-  // nav scroll state
-  const nav=document.getElementById('nav');
-  if(nav){
-    window.addEventListener('scroll',function(){
-      nav.classList.toggle('scrolled',window.scrollY>50);
-    });
-  }
-
-  // hamburger menu toggle
-  const burger=document.getElementById('burger');
-  const navlinks=document.getElementById('navlinks');
+  // mobile hamburger
+  var burger=document.getElementById('burger'), navlinks=document.getElementById('navlinks');
   if(burger && navlinks){
-    burger.addEventListener('click',function(){
-      navlinks.classList.toggle('open');
-    });
-
-    // close menu when clicking a link
-    navlinks.querySelectorAll('a').forEach(link=>{
-      link.addEventListener('click',function(){
-        navlinks.classList.remove('open');
-      });
+    burger.addEventListener('click',function(){ navlinks.classList.toggle('open'); });
+    Array.prototype.forEach.call(navlinks.querySelectorAll('a'),function(a){
+      a.addEventListener('click',function(){ navlinks.classList.remove('open'); });
     });
   }
-  });
+
+  // gallery lightbox
+  var lb=document.getElementById('lb');
+  if(lb){
+    var lbimg=lb.querySelector('img');
+    Array.prototype.forEach.call(document.querySelectorAll('.gal img'),function(img){
+      img.addEventListener('click',function(){ lbimg.src=img.src; lb.classList.add('open'); });
+    });
+    lb.addEventListener('click',function(){ lb.classList.remove('open'); });
+  }
+
+  // booking: date + availability-constrained time slots
+  var holidays=['2026-01-01','2026-01-19','2026-02-16','2026-05-25','2026-07-04','2026-09-07','2026-11-26','2026-11-27','2026-12-25'];
+  var dateEl=document.getElementById('date'), timeEl=document.getElementById('time'), hoursNote=document.getElementById('hoursNote');
+  function fmt(mins){ var h=Math.floor(mins/60), m=mins%60, ap=h>=12?'PM':'AM', hh=h%12; if(hh===0)hh=12; return hh+':'+(m<10?'0'+m:m)+' '+ap; }
+  function ph(txt){ timeEl.innerHTML='<option value="" disabled selected>'+txt+'</option>'; }
+  if(dateEl && timeEl){
+    dateEl.min=new Date().toISOString().split('T')[0];
+    ph('Pick a date first');
+    dateEl.addEventListener('change',function(){
+      var v=dateEl.value;
+      if(!v){ ph('Pick a date first'); if(hoursNote) hoursNote.textContent=''; return; }
+      if(holidays.indexOf(v)>-1){ alert("That date is a holiday and isn't available. Please pick another day."); dateEl.value=''; ph('Pick a date first'); if(hoursNote) hoursNote.textContent=''; return; }
+      var pr=v.split('-'); var dow=new Date(pr[0], pr[1]-1, pr[2]).getDay();
+      var weekend=(dow===0||dow===6);
+      var start=weekend?8*60:16*60, end=22*60;
+      if(hoursNote) hoursNote.textContent=weekend?'Weekend hours: 8:00 AM to 10:00 PM':'Weekday hours: 4:00 PM to 10:00 PM';
+      var html='<option value="" disabled selected>Choose a time</option>';
+      for(var m=start;m<=end;m+=30){ html+='<option>'+fmt(m)+'</option>'; }
+      timeEl.innerHTML=html;
+    });
+  }
+
+  // require date + time before the native FormSubmit POST
+  var form=document.getElementById('bookform');
+  if(form){
+    form.addEventListener('submit',function(e){
+      if(form._honey && form._honey.value){ e.preventDefault(); return; }
+      if(dateEl && !dateEl.value){ e.preventDefault(); alert('Please choose a date.'); return; }
+      if(timeEl && !timeEl.value){ e.preventDefault(); alert('Please choose a time.'); return; }
+    });
+  }
+})();
+</script>
+</body>
+</html>
