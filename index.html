@@ -5,10 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Cece's Touch · Atlanta Braider &amp; Hairstylist | Riverdale, GA</title>
 <meta name="description" content="Cece's Touch by @slayeddbyyc. Feed-in braids, zig-zag feed-ins, stitch braids and cornrows in Riverdale / Atlanta, GA. Walk-ins welcome. Book your appointment today." />
+<meta property="og:site_name" content="Cece's Touch" />
 <meta property="og:title" content="Cece's Touch · Atlanta Braider &amp; Hairstylist" />
-<meta property="og:description" content="Feed-in braids, zig-zag feed-ins, stitch braids &amp; cornrows in Riverdale / Atlanta. Book now." />
-<meta property="og:image" content="./media/hero-poster.jpg" />
+<meta property="og:description" content="Feed-in braids, zig-zag feed-ins, stitch braids &amp; cornrows in Riverdale / Atlanta. Walk-ins welcome. Book now." />
+<meta property="og:url" content="https://ceces-touch-tobiasboscobrowns-projects.vercel.app/" />
 <meta property="og:type" content="website" />
+<meta property="og:image" content="https://ceces-touch-tobiasboscobrowns-projects.vercel.app/media/og-cover.jpg" />
+<meta property="og:image:secure_url" content="https://ceces-touch-tobiasboscobrowns-projects.vercel.app/media/og-cover.jpg" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Cece's Touch, Atlanta braider. Fresh zig-zag feed-in braids." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Cece's Touch · Atlanta Braider &amp; Hairstylist" />
+<meta name="twitter:description" content="Feed-in braids, zig-zag feed-ins, stitch braids &amp; cornrows in Riverdale / Atlanta. Book now." />
+<meta name="twitter:image" content="https://ceces-touch-tobiasboscobrowns-projects.vercel.app/media/og-cover.jpg" />
 <meta name="theme-color" content="#0d0b0c" />
 <link rel="icon" href="./media/logo.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -367,18 +378,4 @@
   const nav=document.getElementById('nav');
   addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40));
   // mobile menu
-  const burger=document.getElementById('burger'),links=document.getElementById('navlinks');
-  burger.addEventListener('click',()=>links.classList.toggle('open'));
-  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
-  // reveal on scroll
-  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
-  document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el)});
-  // lightbox
-  const lb=document.getElementById('lb'),lbimg=lb.querySelector('img');
-  document.querySelectorAll('.gal img').forEach(img=>img.addEventListener('click',()=>{lbimg.src=img.src;lb.classList.add('open')}));
-  lb.addEventListener('click',()=>lb.classList.remove('open'));
-  // year
-  document.getElementById('yr').textContent=new Date().getFullYear();
-  // booking form -> FormSubmit AJAX (emails the booking)
-  const form=document.getElementById('bookform'),btn=document.getElementById('submitBtn');
-  const ENDPOINT='https:/
+  const burger=document.getElementById('burger'),links=document.getElem
