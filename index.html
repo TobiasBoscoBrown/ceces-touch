@@ -449,4 +449,12 @@
   var form=document.getElementById('bookform');
   if(form){
     form.addEventListener('submit',function(e){
-      if(form._honey && form._honey.value){ e.preventDefault();
+      if(form._honey && form._honey.value){ e.preventDefault(); return; }
+      if(dateEl && !dateEl.value){ e.preventDefault(); alert('Please choose a date.'); return; }
+      if(timeEl && !timeEl.value){ e.preventDefault(); alert('Please choose a time.'); return; }
+    });
+  }
+})();
+</script>
+</body>
+</html>
