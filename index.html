@@ -492,4 +492,20 @@
       nav.classList.toggle('scrolled',window.scrollY>50);
     });
   }
+
+  // hamburger menu toggle
+  const burger=document.getElementById('burger');
+  const navlinks=document.getElementById('navlinks');
+  if(burger && navlinks){
+    burger.addEventListener('click',function(){
+      navlinks.classList.toggle('open');
+    });
+
+    // close menu when clicking a link
+    navlinks.querySelectorAll('a').forEach(link=>{
+      link.addEventListener('click',function(){
+        navlinks.classList.remove('open');
+      });
+    });
+  }
   });
