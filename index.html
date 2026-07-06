@@ -436,9 +436,6 @@
   const dateInput = document.getElementById('date');
   const timeInput = document.getElementById('time');
 
-  console.log('Date input:', dateInput);
-  console.log('Time input:', timeInput);
-
   if (dateInput && timeInput) {
     // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
@@ -447,9 +444,14 @@
     // Disable time input until date is selected
     timeInput.disabled = true;
 
-    dateInput.addEventListener('change', function() {
-      console.log('Date changed:', this.value);
-      const selectedDate = this.value;
+    // Try multiple event listeners
+    dateInput.addEventListener('change', updateTimeOptions);
+    dateInput.addEventListener('input', updateTimeOptions);
+    dateInput.addEventListener('blur', updateTimeOptions);
+
+    function updateTimeOptions() {
+      const selectedDate = dateInput.value;
+      console.log('Date value changed:', selectedDate);
       
       if (!selectedDate) {
         timeInput.innerHTML = '<option value="">Select date first</option>';
@@ -460,7 +462,7 @@
       // Check if holiday
       if (isHoliday(selectedDate)) {
         alert('This date is a holiday. Please select another date.');
-        this.value = '';
+        dateInput.value = '';
         timeInput.innerHTML = '<option value="">Select date first</option>';
         timeInput.disabled = true;
         return;
@@ -468,7 +470,7 @@
 
       // Populate time select with available slots
       const timeSlots = getAvailableTimeSlots(selectedDate);
-      console.log('Time slots:', timeSlots);
+      console.log('Available time slots:', timeSlots);
       timeInput.innerHTML = '<option value="">Select a time</option>';
       timeSlots.forEach(slot => {
         const option = document.createElement('option');
@@ -477,8 +479,8 @@
         timeInput.appendChild(option);
       });
       timeInput.disabled = false;
-      console.log('Time input disabled:', timeInput.disabled);
-    });
+      console.log('Time input is now enabled');
+    }
 
     // Form submission validation
     const form = document.getElementById('bookform');
