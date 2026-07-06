@@ -316,7 +316,9 @@
           </div>
           <div class="field">
             <label for="time">Preferred time</label>
-            <input id="time" name="Preferred Time" type="time" />
+            <select id="time" name="Preferred Time" disabled>
+              <option value="">Select date first</option>
+            </select>
           </div>
         </div>
         <div class="field">
@@ -405,17 +407,27 @@
     return holidays.includes(dateStr);
   }
 
-  // Get time constraints based on day of week
-  function getTimeConstraints(dateStr) {
+  // Get available time slots based on day of week
+  function getAvailableTimeSlots(dateStr) {
     const date = new Date(dateStr);
     const day = date.getDay(); // 0 = Sunday, 6 = Saturday
     
     if (day === 0 || day === 6) {
-      // Weekend: 8 AM - 10 PM
-      return { min: '08:00', max: '22:00' };
+      // Weekend: 8 AM - 10 PM (hourly slots)
+      const slots = [];
+      for (let hour = 8; hour <= 21; hour++) {
+        const timeStr = hour.toString().padStart(2, '0') + ':00';
+        slots.push(timeStr);
+      }
+      return slots;
     } else {
-      // Weekday: 4 PM - 10 PM
-      return { min: '16:00', max: '22:00' };
+      // Weekday: 4 PM - 10 PM (hourly slots)
+      const slots = [];
+      for (let hour = 16; hour <= 21; hour++) {
+        const timeStr = hour.toString().padStart(2, '0') + ':00';
+        slots.push(timeStr);
+      }
+      return slots;
     }
   }
 
@@ -438,48 +450,21 @@
       if (isHoliday(selectedDate)) {
         alert('This date is a holiday. Please select another date.');
         this.value = '';
-        timeInput.value = '';
+        timeInput.innerHTML = '<option value="">Select date first</option>';
         timeInput.disabled = true;
         return;
       }
 
-      // Set time constraints immediately
-      const constraints = getTimeConstraints(selectedDate);
-      timeInput.min = constraints.min;
-      timeInput.max = constraints.max;
+      // Populate time select with available slots
+      const timeSlots = getAvailableTimeSlots(selectedDate);
+      timeInput.innerHTML = '<option value="">Select a time</option>';
+      timeSlots.forEach(slot => {
+        const option = document.createElement('option');
+        option.value = slot;
+        option.textContent = slot;
+        timeInput.appendChild(option);
+      });
       timeInput.disabled = false;
-      timeInput.value = ''; // Reset time when date changes
-    });
-
-    // Validate time on change and input
-    timeInput.addEventListener('input', function() {
-      const selectedDate = dateInput.value;
-      if (!selectedDate) {
-        this.value = '';
-        return;
-      }
-
-      const constraints = getTimeConstraints(selectedDate);
-      if (this.value && (this.value < constraints.min || this.value > constraints.max)) {
-        this.value = '';
-      }
-    });
-
-    timeInput.addEventListener('change', function() {
-      const selectedDate = dateInput.value;
-      if (!selectedDate) {
-        alert('Please select a date first.');
-        this.value = '';
-        return;
-      }
-
-      const constraints = getTimeConstraints(selectedDate);
-      if (this.value < constraints.min || this.value > constraints.max) {
-        const day = new Date(selectedDate).getDay();
-        const dayType = (day === 0 || day === 6) ? 'weekend' : 'weekday';
-        alert(`For ${dayType}s, available times are ${constraints.min} - ${constraints.max}`);
-        this.value = '';
-      }
     });
 
     // Form submission validation
@@ -499,23 +484,14 @@
           e.preventDefault();
           alert('This date is a holiday. Please select another date.');
           dateInput.value = '';
-          timeInput.value = '';
+          timeInput.innerHTML = '<option value="">Select date first</option>';
+          timeInput.disabled = true;
           return;
         }
 
         if (!selectedTime) {
           e.preventDefault();
           alert('Please select a time.');
-          return;
-        }
-
-        const constraints = getTimeConstraints(selectedDate);
-        if (selectedTime < constraints.min || selectedTime > constraints.max) {
-          e.preventDefault();
-          const day = new Date(selectedDate).getDay();
-          const dayType = (day === 0 || day === 6) ? 'weekend' : 'weekday';
-          alert(`For ${dayType}s, available times are ${constraints.min} - ${constraints.max}`);
-          timeInput.value = '';
           return;
         }
       });
