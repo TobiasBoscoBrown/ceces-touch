@@ -389,6 +389,7 @@
 <div class="lb" id="lb"><img src="" alt="" /></div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function() {
   // Holiday dates (YYYY-MM-DD format)
   const holidays = [
     '2026-01-01', // New Year's Day
@@ -542,3 +543,4 @@
       nav.classList.toggle('scrolled',window.scrollY>50);
     });
   }
+  });
