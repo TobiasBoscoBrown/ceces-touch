@@ -236,6 +236,7 @@
       <div class="svc rv"><div class="n">06</div><h3>Zig Zag Straight Backs</h3><p>Zig-zag pattern with straight-back feed-ins for a unique, stylish look.</p><div class="price">$100</div></div>
       <div class="svc rv"><div class="n">07</div><h3>Boho Knotless Bob</h3><p>Trendy knotless bob with bohemian flair, perfect for a chic short style.</p><div class="price">$125</div></div>
       <div class="svc rv"><div class="n">08</div><h3>Ponytails</h3><p>Sleek, neat ponytails in various styles for any occasion.</p><div class="price">$55</div></div>
+      <div class="svc rv"><div class="n">09</div><h3>Jayda Wayda Style</h3><p>The viral Jayda Wayda look, large knotless braids styled her signature way.</p><div class="price">$100</div></div>
     </div>
   </div>
 </section>
@@ -306,6 +307,7 @@
               <option>Zig Zag Straight Backs - $100</option>
               <option>Boho Knotless Bob - $125</option>
               <option>Ponytails - $55</option>
+              <option>Jayda Wayda Style - $100</option>
               <option>Not sure, need help</option>
               <option>Other</option>
             </select>
@@ -441,12 +443,4 @@
   var form=document.getElementById('bookform');
   if(form){
     form.addEventListener('submit',function(e){
-      if(form._honey && form._honey.value){ e.preventDefault(); return; }
-      if(dateEl && !dateEl.value){ e.preventDefault(); alert('Please choose a date.'); return; }
-      if(timeEl && !timeEl.value){ e.preventDefault(); alert('Please choose a time.'); return; }
-    });
-  }
-})();
-</script>
-</body>
-</html>
+      if(form._honey && form._honey.value){ e.preventDefault();
