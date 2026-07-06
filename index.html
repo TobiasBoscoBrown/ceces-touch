@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>document.documentElement.classList.add('js');</script>
 <title>Cece's Touch · Atlanta Braider &amp; Hairstylist | Riverdale, GA</title>
 <meta name="description" content="Cece's Touch by @slayeddbyyc. Feed-in braids, zig-zag feed-ins, stitch braids and cornrows in Riverdale / Atlanta, GA. Walk-ins welcome. Book your appointment today." />
 <meta property="og:site_name" content="Cece's Touch" />
@@ -159,9 +160,11 @@
   .foot-col a:hover{color:var(--blush)}
   .copy{margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:.8rem}
 
-  /* reveal */
-  .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-  .rv.in{opacity:1;transform:none}
+  /* reveal (progressive enhancement: visible by default, only hidden when JS is active) */
+  .rv{opacity:1}
+  .js .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .js .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
 
   /* lightbox */
   .lb{position:fixed;inset:0;z-index:100;background:rgba(8,6,7,.94);display:none;align-items:center;justify-content:center;padding:4vw;cursor:zoom-out}
@@ -371,11 +374,4 @@
   </div>
 </footer>
 
-<div class="lb" id="lb"><img src="" alt="" /></div>
-
-<script>
-  // nav scroll state
-  const nav=document.getElementById('nav');
-  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40));
-  // mobile menu
-  const burger=document.getElementById('burger'),links=document.getElem
+<div class="lb" id="lb"><img src="" al
