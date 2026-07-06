@@ -49,8 +49,8 @@
   .btn-ghost:hover{border-color:var(--rose);color:var(--blush);transform:translateY(-2px)}
 
   /* NAV */
-  header.nav{position:fixed;inset:0 0 auto;z-index:50;transition:background .3s ease,backdrop-filter .3s ease,border-color .3s ease;border-bottom:1px solid transparent}
-  header.nav.scrolled{background:rgba(13,11,12,.82);backdrop-filter:blur(14px);border-color:var(--line)}
+  header.nav{position:fixed;inset:0 0 auto;z-index:50;background:var(--ink);border-bottom:1px solid var(--line);transition:box-shadow .3s ease}
+  header.nav.scrolled{box-shadow:0 10px 30px -14px rgba(0,0,0,.75)}
   .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:.85rem 0}
   .brand{display:flex;align-items:center;gap:.7rem}
   .brand img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
@@ -187,7 +187,6 @@
     <nav class="nav-links" id="navlinks">
       <a class="lnk" href="#services">Services</a>
       <a class="lnk" href="#work">The Work</a>
-      <a class="lnk" href="#book">Book</a>
       <a class="btn btn-primary" href="#book">Book now</a>
     </nav>
     <button class="burger" id="burger" aria-label="Menu">&#9776;</button>
@@ -374,4 +373,8 @@
   </div>
 </footer>
 
-<div class="lb" 
+<div class="lb" id="lb"><img src="" alt="" /></div>
+
+<script>
+  // nav scroll state
+  const nav=document.getElementById('
