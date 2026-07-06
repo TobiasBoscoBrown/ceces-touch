@@ -160,11 +160,11 @@
   .foot-col a:hover{color:var(--blush)}
   .copy{margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:.8rem}
 
-  /* reveal (progressive enhancement: visible by default, only hidden when JS is active) */
-  .rv{opacity:1}
-  .js .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-  .js .rv.in{opacity:1;transform:none}
-  @media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
+  /* reveal: content is ALWAYS visible; the fade-up is a pure CSS load enhancement that can never hide content */
+  .rv{opacity:1;transform:none}
+  .js .rv{animation:rvin .8s cubic-bezier(.2,.7,.2,1)}
+  @keyframes rvin{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.js .rv{animation:none}}
 
   /* lightbox */
   .lb{position:fixed;inset:0;z-index:100;background:rgba(8,6,7,.94);display:none;align-items:center;justify-content:center;padding:4vw;cursor:zoom-out}
@@ -374,4 +374,4 @@
   </div>
 </footer>
 
-<div class="lb" id="lb"><img src="" al
+<div class="lb" 
