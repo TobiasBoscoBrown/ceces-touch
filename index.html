@@ -446,6 +446,43 @@
     dateInput.addEventListener('change', function() {
       const selectedDate = this.value;
       
+      if (!selectedDate) {
+        timeInput.innerHTML = '<option value="">Select date first</option>';
+        timeInput.disabled = true;
+        return;
+      }
+      
+      // Check if holiday
+      if (isHoliday(selectedDate)) {
+        alert('This date is a holiday. Please select another date.');
+        this.value = '';
+        timeInput.innerHTML = '<option value="">Select date first</option>';
+        timeInput.disabled = true;
+        return;
+      }
+
+      // Populate time select with available slots
+      const timeSlots = getAvailableTimeSlots(selectedDate);
+      timeInput.innerHTML = '<option value="">Select a time</option>';
+      timeSlots.forEach(slot => {
+        const option = document.createElement('option');
+        option.value = slot;
+        option.textContent = slot;
+        timeInput.appendChild(option);
+      });
+      timeInput.disabled = false;
+    });
+
+    // Also handle input event for better browser compatibility
+    dateInput.addEventListener('input', function() {
+      const selectedDate = this.value;
+      
+      if (!selectedDate) {
+        timeInput.innerHTML = '<option value="">Select date first</option>';
+        timeInput.disabled = true;
+        return;
+      }
+      
       // Check if holiday
       if (isHoliday(selectedDate)) {
         alert('This date is a holiday. Please select another date.');
@@ -499,4 +536,9 @@
   }
 
   // nav scroll state
-  const nav=document.getElementById('
+  const nav=document.getElementById('nav');
+  if(nav){
+    window.addEventListener('scroll',function(){
+      nav.classList.toggle('scrolled',window.scrollY>50);
+    });
+  }
