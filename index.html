@@ -316,9 +316,7 @@
           </div>
           <div class="field">
             <label for="time">Preferred time</label>
-            <select id="time" name="Preferred Time">
-              <option value="">Select date first</option>
-            </select>
+            <input id="time" name="Preferred Time" type="time" step="3600" />
           </div>
         </div>
         <div class="field">
@@ -408,30 +406,6 @@
     return holidays.includes(dateStr);
   }
 
-  // Get available time slots based on day of week
-  function getAvailableTimeSlots(dateStr) {
-    const date = new Date(dateStr);
-    const day = date.getDay(); // 0 = Sunday, 6 = Saturday
-    
-    if (day === 0 || day === 6) {
-      // Weekend: 8 AM - 10 PM (hourly slots)
-      const slots = [];
-      for (let hour = 8; hour <= 21; hour++) {
-        const timeStr = hour.toString().padStart(2, '0') + ':00';
-        slots.push(timeStr);
-      }
-      return slots;
-    } else {
-      // Weekday: 4 PM - 10 PM (hourly slots)
-      const slots = [];
-      for (let hour = 16; hour <= 21; hour++) {
-        const timeStr = hour.toString().padStart(2, '0') + ':00';
-        slots.push(timeStr);
-      }
-      return slots;
-    }
-  }
-
   // Set time input constraints based on selected date
   const dateInput = document.getElementById('date');
   const timeInput = document.getElementById('time');
@@ -441,36 +415,44 @@
     const today = new Date().toISOString().split('T')[0];
     dateInput.min = today;
 
-    // Try multiple event listeners
-    dateInput.addEventListener('change', updateTimeOptions);
-    dateInput.addEventListener('input', updateTimeOptions);
+    // Disable time input until date is selected
+    timeInput.disabled = true;
 
-    function updateTimeOptions() {
-      const selectedDate = dateInput.value;
+    dateInput.addEventListener('change', function() {
+      const selectedDate = this.value;
       
       if (!selectedDate) {
-        timeInput.innerHTML = '<option value="">Select date first</option>';
+        timeInput.disabled = true;
+        timeInput.value = '';
         return;
       }
       
       // Check if holiday
       if (isHoliday(selectedDate)) {
         alert('This date is a holiday. Please select another date.');
-        dateInput.value = '';
-        timeInput.innerHTML = '<option value="">Select date first</option>';
+        this.value = '';
+        timeInput.disabled = true;
+        timeInput.value = '';
         return;
       }
 
-      // Populate time select with available slots
-      const timeSlots = getAvailableTimeSlots(selectedDate);
-      timeInput.innerHTML = '<option value="">Select a time</option>';
-      timeSlots.forEach(slot => {
-        const option = document.createElement('option');
-        option.value = slot;
-        option.textContent = slot;
-        timeInput.appendChild(option);
-      });
-    }
+      // Set time constraints based on day of week
+      const date = new Date(selectedDate);
+      const day = date.getDay();
+      
+      if (day === 0 || day === 6) {
+        // Weekend: 8 AM - 10 PM
+        timeInput.min = '08:00';
+        timeInput.max = '22:00';
+      } else {
+        // Weekday: 4 PM - 10 PM
+        timeInput.min = '16:00';
+        timeInput.max = '22:00';
+      }
+      
+      timeInput.disabled = false;
+      timeInput.value = '';
+    });
 
     // Form submission validation
     const form = document.getElementById('bookform');
