@@ -418,6 +418,13 @@
   const timeInput = document.getElementById('time');
 
   if (dateInput && timeInput) {
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+
+    // Disable time input until date is selected
+    timeInput.disabled = true;
+
     dateInput.addEventListener('change', function() {
       const selectedDate = this.value;
       
@@ -426,13 +433,15 @@
         alert('This date is a holiday. Please select another date.');
         this.value = '';
         timeInput.value = '';
+        timeInput.disabled = true;
         return;
       }
 
-      // Set time constraints
+      // Set time constraints immediately
       const constraints = getTimeConstraints(selectedDate);
       timeInput.min = constraints.min;
       timeInput.max = constraints.max;
+      timeInput.disabled = false;
       timeInput.value = ''; // Reset time when date changes
     });
 
