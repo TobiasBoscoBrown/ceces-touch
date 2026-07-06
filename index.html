@@ -450,7 +450,20 @@
       timeInput.value = ''; // Reset time when date changes
     });
 
-    // Validate time on change
+    // Validate time on change and input
+    timeInput.addEventListener('input', function() {
+      const selectedDate = dateInput.value;
+      if (!selectedDate) {
+        this.value = '';
+        return;
+      }
+
+      const constraints = getTimeConstraints(selectedDate);
+      if (this.value && (this.value < constraints.min || this.value > constraints.max)) {
+        this.value = '';
+      }
+    });
+
     timeInput.addEventListener('change', function() {
       const selectedDate = dateInput.value;
       if (!selectedDate) {
@@ -467,6 +480,45 @@
         this.value = '';
       }
     });
+
+    // Form submission validation
+    const form = document.getElementById('bookform');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const selectedDate = dateInput.value;
+        const selectedTime = timeInput.value;
+
+        if (!selectedDate) {
+          e.preventDefault();
+          alert('Please select a date.');
+          return;
+        }
+
+        if (isHoliday(selectedDate)) {
+          e.preventDefault();
+          alert('This date is a holiday. Please select another date.');
+          dateInput.value = '';
+          timeInput.value = '';
+          return;
+        }
+
+        if (!selectedTime) {
+          e.preventDefault();
+          alert('Please select a time.');
+          return;
+        }
+
+        const constraints = getTimeConstraints(selectedDate);
+        if (selectedTime < constraints.min || selectedTime > constraints.max) {
+          e.preventDefault();
+          const day = new Date(selectedDate).getDay();
+          const dayType = (day === 0 || day === 6) ? 'weekend' : 'weekday';
+          alert(`For ${dayType}s, available times are ${constraints.min} - ${constraints.max}`);
+          timeInput.value = '';
+          return;
+        }
+      });
+    }
   }
 
   // nav scroll state
