@@ -436,6 +436,9 @@
   const dateInput = document.getElementById('date');
   const timeInput = document.getElementById('time');
 
+  console.log('Date input:', dateInput);
+  console.log('Time input:', timeInput);
+
   if (dateInput && timeInput) {
     // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
@@ -445,6 +448,7 @@
     timeInput.disabled = true;
 
     dateInput.addEventListener('change', function() {
+      console.log('Date changed:', this.value);
       const selectedDate = this.value;
       
       if (!selectedDate) {
@@ -464,6 +468,7 @@
 
       // Populate time select with available slots
       const timeSlots = getAvailableTimeSlots(selectedDate);
+      console.log('Time slots:', timeSlots);
       timeInput.innerHTML = '<option value="">Select a time</option>';
       timeSlots.forEach(slot => {
         const option = document.createElement('option');
@@ -472,37 +477,7 @@
         timeInput.appendChild(option);
       });
       timeInput.disabled = false;
-    });
-
-    // Also handle input event for better browser compatibility
-    dateInput.addEventListener('input', function() {
-      const selectedDate = this.value;
-      
-      if (!selectedDate) {
-        timeInput.innerHTML = '<option value="">Select date first</option>';
-        timeInput.disabled = true;
-        return;
-      }
-      
-      // Check if holiday
-      if (isHoliday(selectedDate)) {
-        alert('This date is a holiday. Please select another date.');
-        this.value = '';
-        timeInput.innerHTML = '<option value="">Select date first</option>';
-        timeInput.disabled = true;
-        return;
-      }
-
-      // Populate time select with available slots
-      const timeSlots = getAvailableTimeSlots(selectedDate);
-      timeInput.innerHTML = '<option value="">Select a time</option>';
-      timeSlots.forEach(slot => {
-        const option = document.createElement('option');
-        option.value = slot;
-        option.textContent = slot;
-        timeInput.appendChild(option);
-      });
-      timeInput.disabled = false;
+      console.log('Time input disabled:', timeInput.disabled);
     });
 
     // Form submission validation
