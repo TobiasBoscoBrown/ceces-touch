@@ -309,6 +309,10 @@
             <label for="date">Preferred date</label>
             <input id="date" name="Preferred Date" type="date" />
           </div>
+          <div class="field">
+            <label for="time">Preferred time</label>
+            <input id="time" name="Preferred Time" type="time" />
+          </div>
         </div>
         <div class="field">
           <label for="notes">Notes</label>
@@ -377,5 +381,79 @@
 <div class="lb" id="lb"><img src="" alt="" /></div>
 
 <script>
+  // Holiday dates (YYYY-MM-DD format)
+  const holidays = [
+    '2026-01-01', // New Year's Day
+    '2026-01-19', // MLK Day
+    '2026-02-16', // Presidents Day
+    '2026-05-25', // Memorial Day
+    '2026-07-04', // Independence Day
+    '2026-09-07', // Labor Day
+    '2026-11-26', // Thanksgiving
+    '2026-11-27', // Day after Thanksgiving
+    '2026-12-25', // Christmas Day
+  ];
+
+  // Check if date is a holiday
+  function isHoliday(dateStr) {
+    return holidays.includes(dateStr);
+  }
+
+  // Get time constraints based on day of week
+  function getTimeConstraints(dateStr) {
+    const date = new Date(dateStr);
+    const day = date.getDay(); // 0 = Sunday, 6 = Saturday
+    
+    if (day === 0 || day === 6) {
+      // Weekend: 8 AM - 10 PM
+      return { min: '08:00', max: '22:00' };
+    } else {
+      // Weekday: 4 PM - 10 PM
+      return { min: '16:00', max: '22:00' };
+    }
+  }
+
+  // Set time input constraints based on selected date
+  const dateInput = document.getElementById('date');
+  const timeInput = document.getElementById('time');
+
+  if (dateInput && timeInput) {
+    dateInput.addEventListener('change', function() {
+      const selectedDate = this.value;
+      
+      // Check if holiday
+      if (isHoliday(selectedDate)) {
+        alert('This date is a holiday. Please select another date.');
+        this.value = '';
+        timeInput.value = '';
+        return;
+      }
+
+      // Set time constraints
+      const constraints = getTimeConstraints(selectedDate);
+      timeInput.min = constraints.min;
+      timeInput.max = constraints.max;
+      timeInput.value = ''; // Reset time when date changes
+    });
+
+    // Validate time on change
+    timeInput.addEventListener('change', function() {
+      const selectedDate = dateInput.value;
+      if (!selectedDate) {
+        alert('Please select a date first.');
+        this.value = '';
+        return;
+      }
+
+      const constraints = getTimeConstraints(selectedDate);
+      if (this.value < constraints.min || this.value > constraints.max) {
+        const day = new Date(selectedDate).getDay();
+        const dayType = (day === 0 || day === 6) ? 'weekend' : 'weekday';
+        alert(`For ${dayType}s, available times are ${constraints.min} - ${constraints.max}`);
+        this.value = '';
+      }
+    });
+  }
+
   // nav scroll state
   const nav=document.getElementById('
