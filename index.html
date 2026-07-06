@@ -417,26 +417,32 @@
     lb.addEventListener('click',function(){ lb.classList.remove('open'); });
   }
 
-  // booking: date + availability-constrained time slots
+  // booking: date + availability-constrained time slots (auto-selects the next available slot)
   var holidays=['2026-01-01','2026-01-19','2026-02-16','2026-05-25','2026-07-04','2026-09-07','2026-11-26','2026-11-27','2026-12-25'];
   var dateEl=document.getElementById('date'), timeEl=document.getElementById('time'), hoursNote=document.getElementById('hoursNote');
   function fmt(mins){ var h=Math.floor(mins/60), m=mins%60, ap=h>=12?'PM':'AM', hh=h%12; if(hh===0)hh=12; return hh+':'+(m<10?'0'+m:m)+' '+ap; }
   function ph(txt){ timeEl.innerHTML='<option value="" disabled selected>'+txt+'</option>'; }
+  function localToday(){ var d=new Date(), mo=('0'+(d.getMonth()+1)).slice(-2), da=('0'+d.getDate()).slice(-2); return d.getFullYear()+'-'+mo+'-'+da; }
+  function buildSlots(){
+    if(!dateEl||!timeEl) return;
+    var v=dateEl.value;
+    if(!v){ ph('Pick a date first'); if(hoursNote) hoursNote.textContent=''; return; }
+    if(holidays.indexOf(v)>-1){ alert("That date is a holiday and isn't available. Please pick another day."); dateEl.value=''; ph('Pick a date first'); if(hoursNote) hoursNote.textContent=''; return; }
+    var pr=v.split('-'), dow=new Date(pr[0], pr[1]-1, pr[2]).getDay(), weekend=(dow===0||dow===6);
+    var start=weekend?8*60:16*60, end=22*60;
+    if(hoursNote) hoursNote.textContent=weekend?'Weekend hours: 8:00 AM to 10:00 PM':'Weekday hours: 4:00 PM to 10:00 PM';
+    if(v===localToday()){ var now=new Date(), cur=Math.ceil((now.getHours()*60+now.getMinutes()+1)/30)*30; if(cur>start) start=cur; }
+    if(start>end){ ph('No times left today, please pick another day'); return; }
+    var html='';
+    for(var m=start;m<=end;m+=30){ html+='<option>'+fmt(m)+'</option>'; }
+    timeEl.innerHTML=html;
+    timeEl.selectedIndex=0; // auto-fill the next available slot
+  }
   if(dateEl && timeEl){
-    dateEl.min=new Date().toISOString().split('T')[0];
-    ph('Pick a date first');
-    dateEl.addEventListener('change',function(){
-      var v=dateEl.value;
-      if(!v){ ph('Pick a date first'); if(hoursNote) hoursNote.textContent=''; return; }
-      if(holidays.indexOf(v)>-1){ alert("That date is a holiday and isn't available. Please pick another day."); dateEl.value=''; ph('Pick a date first'); if(hoursNote) hoursNote.textContent=''; return; }
-      var pr=v.split('-'); var dow=new Date(pr[0], pr[1]-1, pr[2]).getDay();
-      var weekend=(dow===0||dow===6);
-      var start=weekend?8*60:16*60, end=22*60;
-      if(hoursNote) hoursNote.textContent=weekend?'Weekend hours: 8:00 AM to 10:00 PM':'Weekday hours: 4:00 PM to 10:00 PM';
-      var html='<option value="" disabled selected>Choose a time</option>';
-      for(var m=start;m<=end;m+=30){ html+='<option>'+fmt(m)+'</option>'; }
-      timeEl.innerHTML=html;
-    });
+    dateEl.min=localToday();
+    dateEl.addEventListener('change',buildSlots);
+    dateEl.addEventListener('input',buildSlots);
+    buildSlots();
   }
 
   // require date + time before the native FormSubmit POST
