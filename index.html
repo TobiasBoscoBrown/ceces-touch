@@ -316,7 +316,7 @@
           </div>
           <div class="field">
             <label for="time">Preferred time</label>
-            <select id="time" name="Preferred Time" disabled>
+            <select id="time" name="Preferred Time">
               <option value="">Select date first</option>
             </select>
           </div>
@@ -441,21 +441,15 @@
     const today = new Date().toISOString().split('T')[0];
     dateInput.min = today;
 
-    // Disable time input until date is selected
-    timeInput.disabled = true;
-
     // Try multiple event listeners
     dateInput.addEventListener('change', updateTimeOptions);
     dateInput.addEventListener('input', updateTimeOptions);
-    dateInput.addEventListener('blur', updateTimeOptions);
 
     function updateTimeOptions() {
       const selectedDate = dateInput.value;
-      console.log('Date value changed:', selectedDate);
       
       if (!selectedDate) {
         timeInput.innerHTML = '<option value="">Select date first</option>';
-        timeInput.disabled = true;
         return;
       }
       
@@ -464,13 +458,11 @@
         alert('This date is a holiday. Please select another date.');
         dateInput.value = '';
         timeInput.innerHTML = '<option value="">Select date first</option>';
-        timeInput.disabled = true;
         return;
       }
 
       // Populate time select with available slots
       const timeSlots = getAvailableTimeSlots(selectedDate);
-      console.log('Available time slots:', timeSlots);
       timeInput.innerHTML = '<option value="">Select a time</option>';
       timeSlots.forEach(slot => {
         const option = document.createElement('option');
@@ -478,8 +470,6 @@
         option.textContent = slot;
         timeInput.appendChild(option);
       });
-      timeInput.disabled = false;
-      console.log('Time input is now enabled');
     }
 
     // Form submission validation
